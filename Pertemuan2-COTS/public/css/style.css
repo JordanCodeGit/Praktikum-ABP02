@@ -1,0 +1,627 @@
+/* ============================================================
+   style.css — Pokédex CRUD App
+   Aesthetic: Retro-Futuristic Pokédex
+   Fonts: Press Start 2P (pixel titles) + Nunito (body)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* --- CSS Custom Properties --- */
+:root {
+  --red:         #e3350d;
+  --red-dark:    #b52a09;
+  --red-light:   #ff5733;
+  --yellow:      #ffcb05;
+  --yellow-dark: #d4a800;
+  --navy:        #1a1f3e;
+  --navy-light:  #252b52;
+  --screen-bg:   #c8d8a8;   /* classic Game Boy screen tint */
+  --white:       #ffffff;
+  --off-white:   #f9f7f4;
+  --border:      #e2e0da;
+  --muted:       #7a7a8c;
+  --radius:      12px;
+  --shadow:      0 6px 24px rgba(0,0,0,0.12);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.18);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: #f0ece4;
+  /* subtle dot-grid texture */
+  background-image: radial-gradient(circle, #d4cfc6 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--navy);
+  min-height: 100vh;
+  margin: 0;
+}
+
+/* ============================================================
+   NAVBAR  —  Deep navy with red Pokéball logo accent
+   ============================================================ */
+.navbar {
+  background-color: var(--navy) !important;
+  padding: 0;
+  border-bottom: 4px solid var(--red);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.navbar-inner {
+  padding: 12px 0;
+}
+
+.navbar-brand {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: var(--yellow) !important;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.4;
+}
+
+/* Pokéball SVG icon next to brand */
+.pokeball-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  animation: spin-slow 8s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.nav-link {
+  color: #a8b4d0 !important;
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.3px;
+  padding: 8px 16px !important;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--yellow) !important;
+  background-color: rgba(255, 203, 5, 0.08);
+}
+
+/* ============================================================
+   PAGE HEADER  —  Pokédex red panel with dot screen
+   ============================================================ */
+.page-header {
+  background-color: var(--red);
+  background-image:
+    radial-gradient(circle at 80% 50%, rgba(255,255,255,0.06) 0%, transparent 60%),
+    radial-gradient(circle, rgba(0,0,0,0.15) 1px, transparent 1px);
+  background-size: auto, 18px 18px;
+  color: white;
+  padding: 48px 0 44px;
+  margin-bottom: 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative large pokéball circle in header corner */
+.page-header::before {
+  content: '';
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 40px solid rgba(255,255,255,0.07);
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 8px solid rgba(255,255,255,0.10);
+  pointer-events: none;
+}
+
+.page-header h1 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  margin-bottom: 10px;
+  text-shadow: 3px 3px 0 rgba(0,0,0,0.25);
+  letter-spacing: 0.5px;
+}
+
+.page-header p {
+  color: rgba(255,255,255,0.82);
+  font-size: 0.9rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+.card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--white);
+  border-top: 4px solid var(--red);
+  overflow: hidden;
+}
+
+.card-header {
+  background: var(--white);
+  border-bottom: 2px solid #f0ece4;
+  padding: 16px 24px;
+}
+
+.card-header h5 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: var(--navy);
+  margin: 0;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+.card-body { padding: 24px; }
+
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-label {
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--navy);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+
+.form-control,
+.form-select {
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-family: 'Nunito', sans-serif;
+  color: var(--navy);
+  background-color: var(--off-white);
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--red);
+  background-color: var(--white);
+  box-shadow: 0 0 0 3px rgba(227,53,13,0.12);
+  outline: none;
+}
+
+.form-text {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  padding: 9px 20px;
+  transition: all 0.18s;
+  letter-spacing: 0.3px;
+}
+
+.btn-primary {
+  background-color: var(--red);
+  border-color: var(--red);
+  color: white;
+}
+.btn-primary:hover {
+  background-color: var(--red-dark);
+  border-color: var(--red-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(227,53,13,0.35);
+}
+
+.btn-warning {
+  background-color: var(--yellow);
+  border-color: var(--yellow-dark);
+  color: var(--navy);
+}
+.btn-warning:hover {
+  background-color: var(--yellow-dark);
+  border-color: var(--yellow-dark);
+  color: var(--navy);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(212,168,0,0.35);
+}
+
+.btn-danger {
+  background-color: var(--navy);
+  border-color: var(--navy);
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #0d1228;
+  border-color: #0d1228;
+  transform: translateY(-1px);
+}
+
+.btn-outline-secondary {
+  border: 2px solid var(--border);
+  color: var(--muted);
+}
+.btn-outline-secondary:hover {
+  background-color: var(--off-white);
+  border-color: #ccc;
+  color: var(--navy);
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.78rem;
+}
+
+/* ============================================================
+   POKEMON TYPE BADGES
+   ============================================================ */
+.type-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px; /* Pixelated-style rounded corners */
+  min-width: 80px;    /* Keeps them aligned */
+  text-align: center;
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.15); /* Adds slight depth */
+}
+
+.type-normal { background-color: #A8A878; color: white; }
+.type-fire   { background-color: #F08030; color: white; }
+.type-water  { background-color: #6890F0; color: white; }
+.type-grass  { background-color: #78C850; color: white; }
+.type-electric { background-color: #F8D030; color: #333; /* Dark text on Yellow */ }
+.type-ice    { background-color: #98D8D8; color: #333; /* Dark text on Cyan */ }
+.type-fighting { background-color: #C03028; color: white; }
+.type-poison { background-color: #A040A0; color: white; }
+.type-ground { background-color: #E0C068; color: #333; /* Dark text on Tan */ }
+.type-flying { background-color: #A890F0; color: white; }
+.type-psychic { background-color: #F85888; color: white; }
+.type-bug    { background-color: #A8B820; color: white; }
+.type-rock   { background-color: #B8A038; color: white; }
+.type-ghost  { background-color: #705898; color: white; }
+.type-dragon { background-color: #7038F8; color: white; }
+.type-dark   { background-color: #705848; color: white; }
+.type-steel  { background-color: #B8B8D0; color: #333; /* Dark text on Grey */ }
+.type-fairy  { background-color: #EE99AC; color: #333; /* Dark text on Pink */ }
+
+/* ============================================================
+   HP BAR
+   ============================================================ */
+.hp-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.hp-bar {
+  flex: 1;
+  height: 8px;
+  background: #e8e4dc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hp-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  transition: width 0.6s ease;
+}
+
+.hp-fill.mid  { background: linear-gradient(90deg, #ff9800, #ffc107); }
+.hp-fill.low  { background: linear-gradient(90deg, #e3350d, #ff5733); }
+
+.hp-text {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--navy);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ============================================================
+   INDEX FEATURE CARDS
+   ============================================================ */
+.feature-card {
+  border-radius: var(--radius);
+  padding: 30px 24px;
+  text-align: center;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  border: none;
+  border-top: 4px solid var(--border);
+  transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.feature-card.red-top   { border-top-color: var(--red); }
+.feature-card.yellow-top{ border-top-color: var(--yellow); }
+.feature-card.navy-top  { border-top-color: var(--navy); }
+.feature-card.green-top { border-top-color: #4caf50; }
+
+.feature-card .icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  font-size: 1.8rem;
+}
+
+.feature-card h5 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  margin-bottom: 10px;
+  color: var(--navy);
+  line-height: 1.8;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 16px;
+  font-weight: 600;
+}
+
+/* ============================================================
+   DATATABLES CUSTOMIZATION
+   ============================================================ */
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 32px 6px 10px;
+  font-size: 0.875rem;
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--off-white);
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+  border-color: var(--red);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(227,53,13,0.12);
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_length {
+  font-size: 0.84rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+table.dataTable thead th {
+  background-color: var(--navy);
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.5px;
+  padding: 14px 16px !important;
+  border-bottom: none !important;
+  white-space: nowrap;
+}
+
+table.dataTable thead th.sorting::after,
+table.dataTable thead th.sorting_asc::after,
+table.dataTable thead th.sorting_desc::after {
+  color: var(--yellow);
+  opacity: 0.7;
+}
+
+table.dataTable tbody tr {
+  transition: background 0.15s;
+}
+
+table.dataTable tbody tr:hover {
+  background-color: #fff8f0 !important;
+}
+
+table.dataTable tbody td {
+  font-size: 0.875rem;
+  font-weight: 600;
+  vertical-align: middle;
+  padding: 13px 16px !important;
+  border-bottom: 1px solid #f0ece4 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 6px !important;
+  font-family: 'Nunito', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.82rem !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  color: white !important;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-content {
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.modal-header {
+  background: var(--navy);
+  color: white;
+  padding: 18px 24px;
+  border-bottom: 3px solid var(--yellow);
+}
+
+.modal-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.58rem;
+  line-height: 1.8;
+  color: var(--yellow);
+}
+
+.modal-header .btn-close { filter: invert(1); }
+
+.modal-body  { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 2px solid #f0ece4;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+#toastNotif {
+  min-width: 280px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ============================================================
+   ALERT BOX (form page)
+   ============================================================ */
+#alertBox {
+  display: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  border-left: 5px solid;
+}
+#alertBox.alert-success { border-left-color: #4caf50; }
+#alertBox.alert-danger  { border-left-color: var(--red); }
+
+/* ============================================================
+   ROW NUMBER BADGE
+   ============================================================ */
+.badge-no {
+  background: var(--navy);
+  color: var(--yellow);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  padding: 5px 9px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+/* ============================================================
+   STATS ROW (index.html)
+   ============================================================ */
+.stat-chip {
+  background: var(--white);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border-left: 5px solid var(--red);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.stat-chip .num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.1rem;
+  color: var(--red);
+  line-height: 1;
+}
+
+.stat-chip .label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  background-color: var(--navy);
+  color: #6b7494;
+  text-align: center;
+  padding: 22px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 60px;
+  border-top: 4px solid var(--red);
+}
+
+footer .accent { color: var(--yellow); }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* ============================================================
+   INFO BOX
+   ============================================================ */
+.info-box {
+  background: #fffbf0;
+  border: 2px dashed var(--yellow-dark);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #7a5a00;
+}

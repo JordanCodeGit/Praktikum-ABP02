@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabel Pokédex</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- DataTables CSS (jQuery Plugin untuk tabel interaktif) -->
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container navbar-inner">
+      <a class="navbar-brand" href="index.html">
+        <svg class="pokeball-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="white" stroke="#333" stroke-width="4"/>
+          <path d="M2 50 Q2 2 50 2 Q98 2 98 50Z" fill="#e3350d"/>
+          <rect x="2" y="46" width="96" height="8" fill="#333"/>
+          <circle cx="50" cy="50" r="14" fill="white" stroke="#333" stroke-width="4"/>
+          <circle cx="50" cy="50" r="6" fill="#f0f0f0"/>
+        </svg>
+        POKÉDEX JORDAN
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        style="border-color:rgba(255,203,5,0.3);">
+        <span class="navbar-toggler-icon" style="filter:invert(1)"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto gap-1">
+          <li class="nav-item"><a class="nav-link" href="index.html">🏠 Beranda</a></li>
+          <li class="nav-item"><a class="nav-link" href="form.html">➕ Daftarkan Pokémon</a></li>
+          <li class="nav-item"><a class="nav-link active" href="table.html">📋 Lihat Pokédex</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="container animate-up">
+      <h1>📋 POKÉDEX — DAFTAR POKÉMON</h1>
+      <p>Semua Pokémon yang terdaftar ditampilkan di sini. Klik Edit atau Hapus untuk mengelola data.</p>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="position-fixed top-0 end-0 p-3" style="z-index:9999;">
+    <div id="toastNotif" class="toast text-white border-0" role="alert">
+      <div class="toast-header text-white" style="border-bottom:none;">
+        <strong class="me-auto">🔔 Pokédex</strong>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+      </div>
+      <div class="toast-body fw-bold" id="toastBody"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="container pb-5">
+
+    <!-- Top bar -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <p class="mb-0 text-muted fw-bold" style="font-size:0.84rem;">
+        📡 Data diambil dari server dalam format JSON dan dirender oleh DataTables jQuery plugin
+      </p>
+      <a href="form.html" class="btn btn-primary">
+        ➕ Daftarkan Pokémon Baru
+      </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card animate-up">
+      <div class="card-header d-flex align-items-center gap-2">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width:20px;flex-shrink:0;">
+          <circle cx="50" cy="50" r="48" fill="white" stroke="#333" stroke-width="5"/>
+          <path d="M2 50 Q2 2 50 2 Q98 2 98 50Z" fill="#e3350d"/>
+          <rect x="2" y="46" width="96" height="8" fill="#333"/>
+          <circle cx="50" cy="50" r="14" fill="white" stroke="#333" stroke-width="5"/>
+        </svg>
+        <h5>DAFTAR POKÉMON TERDAFTAR</h5>
+      </div>
+      <div class="card-body">
+
+        <!--
+          DataTables jQuery Plugin
+          - id="tabelData" digunakan oleh DataTables di script.js
+          - Data diambil dari /api/users (format JSON)
+          - Fitur: search, sort, pagination otomatis dari plugin
+        -->
+        <div class="table-responsive">
+          <table id="tabelData" class="table table-hover table-bordered w-100">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nama Pokémon</th>
+                <th>Tipe</th>
+                <th>Ability</th>
+                <th>Base HP</th>
+                <th>Region</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Diisi otomatis oleh DataTables dari data JSON -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end container -->
+
+  <!-- =============================================
+       MODAL EDIT — Bootstrap Modal
+       Digunakan untuk mengubah data Pokémon yang ada
+       ============================================= -->
+  <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="labelModalEdit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="labelModalEdit">
+            ✏️ &nbsp;EDIT DATA POKÉMON
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+
+        <!-- Modal Body — Form Edit -->
+        <div class="modal-body">
+          <!-- id="formEdit" — submit ditangani jQuery AJAX di script.js -->
+          <form id="formEdit">
+
+            <!-- Nama -->
+            <div class="mb-3">
+              <label for="editName" class="form-label">🎴 Nama Pokémon</label>
+              <input type="text" class="form-control" id="editName" required>
+            </div>
+
+            <!-- Tipe (dropdown) -->
+            <div class="mb-3">
+              <label for="editType" class="form-label">🔥 Tipe Pokémon</label>
+              <select class="form-select" id="editType" required>
+                <option value="Normal">Normal</option>
+                <option value="Fire">Fire 🔥</option>
+                <option value="Water">Water 💧</option>
+                <option value="Grass">Grass 🌿</option>
+                <option value="Electric">Electric ⚡</option>
+                <option value="Ice">Ice 🧊</option>
+                <option value="Fighting">Fighting 🥊</option>
+                <option value="Poison">Poison ☠️</option>
+                <option value="Ground">Ground 🌍</option>
+                <option value="Flying">Flying 🕊️</option>
+                <option value="Psychic">Psychic 🔮</option>
+                <option value="Bug">Bug 🐛</option>
+                <option value="Rock">Rock 🪨</option>
+                <option value="Ghost">Ghost 👻</option>
+                <option value="Dragon">Dragon 🐉</option>
+                <option value="Dark">Dark 🌑</option>
+                <option value="Steel">Steel ⚙️</option>
+                <option value="Fairy">Fairy 🧚</option>
+              </select>
+            </div>
+
+            <!-- Ability -->
+            <div class="mb-3">
+              <label for="editAbility" class="form-label">✨ Kemampuan (Ability)</label>
+              <input type="text" class="form-control" id="editAbility" required>
+            </div>
+
+            <!-- HP -->
+            <div class="mb-3">
+              <label for="editHp" class="form-label">❤️ Base HP</label>
+              <input type="number" class="form-control" id="editHp" min="1" max="255" required>
+            </div>
+
+            <!-- Region -->
+            <div class="mb-2">
+              <label for="editRegion" class="form-label">🗺️ Region Asal</label>
+              <select class="form-select" id="editRegion" required>
+                <option value="Kanto">Kanto (Gen 1)</option>
+                <option value="Johto">Johto (Gen 2)</option>
+                <option value="Hoenn">Hoenn (Gen 3)</option>
+                <option value="Sinnoh">Sinnoh (Gen 4)</option>
+                <option value="Unova">Unova (Gen 5)</option>
+                <option value="Kalos">Kalos (Gen 6)</option>
+                <option value="Alola">Alola (Gen 7)</option>
+                <option value="Galar">Galar (Gen 8)</option>
+                <option value="Paldea">Paldea (Gen 9)</option>
+              </select>
+            </div>
+
+          </form>
+        </div><!-- end modal-body -->
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            ✖ Batal
+          </button>
+          <!-- Trigger submit pada #formEdit -->
+          <button type="submit" form="formEdit" class="btn btn-primary">
+            💾 Simpan Perubahan
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div><!-- end #modalEdit -->
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="mb-0">
+      Pokédex Jordan &bull; Tugas Pertemuan 2 COTS &bull;
+      <span class="accent">Node.js + Bootstrap + jQuery + DataTables</span>
+    </p>
+  </footer>
+
+  <!--
+    URUTAN LOADING SCRIPT (SANGAT PENTING!):
+    1. Bootstrap JS  → untuk Modal & Toast
+    2. jQuery        → wajib sebelum DataTables & script.js
+    3. DataTables    → jQuery plugin untuk tabel interaktif
+    4. DT Bootstrap5 → integrasi DataTables dengan Bootstrap
+    5. script.js     → kode kustom kita
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+  <script src="js/script.js"></script>
+
+</body>
+</html>

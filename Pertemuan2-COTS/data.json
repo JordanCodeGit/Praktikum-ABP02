@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Charizard",
+    "type": "Fire",
+    "ability": "Blaze",
+    "hp": 78,
+    "region": "Kanto"
+  },
+  {
+    "id": 2,
+    "name": "Blastoise",
+    "type": "Water",
+    "ability": "Torrent",
+    "hp": 79,
+    "region": "Kanto"
+  },
+  {
+    "id": 3,
+    "name": "Mewtwo",
+    "type": "Psychic",
+    "ability": "Pressure",
+    "hp": 106,
+    "region": "Kanto"
+  },
+  {
+    "id": 4,
+    "name": "Umbreon",
+    "type": "Dark",
+    "ability": "Synchronize",
+    "hp": 95,
+    "region": "Johto"
+  },
+  {
+    "id": 5,
+    "name": "Lucario",
+    "type": "Fighting",
+    "ability": "Inner Focus",
+    "hp": 70,
+    "region": "Sinnoh"
+  }
+]
