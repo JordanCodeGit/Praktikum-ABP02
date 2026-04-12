@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tugas 4 — AJAX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0d0f14;
+      --surface: #161922;
+      --border:  #252a36;
+      --accent:  #e8ff5a;
+      --text:    #e8ecf4;
+      --muted:   #6b7280;
+      --danger:  #ff6b6b;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 60px 20px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    header .label {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 40%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 300;
+    }
+
+    /* ── Button ── */
+    #btn-tampilkan {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #0d0f14;
+      border: none;
+      border-radius: 6px;
+      padding: 14px 32px;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      margin-bottom: 48px;
+    }
+    #btn-tampilkan:hover  { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,90,.25); }
+    #btn-tampilkan:active { transform: translateY(0);    opacity: .85; }
+    #btn-tampilkan:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* spinner icon inside button */
+    #btn-tampilkan .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #0d0f14;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    #btn-tampilkan.loading .spinner { display: block; }
+    #btn-tampilkan.loading .btn-text { opacity: .6; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result area ── */
+    #hasil-profil {
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* ── Profile Card ── */
+    .profil-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeUp 0.35s forwards;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #7eeebb);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #0d0f14;
+      flex-shrink: 0;
+    }
+
+    .profil-info { flex: 1; }
+    .profil-info .nama {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .profil-info .detail {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .profil-info .detail span {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* Pill badge */
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 500;
+      background: rgba(232,255,90,.12);
+      color: var(--accent);
+      border: 1px solid rgba(232,255,90,.25);
+      border-radius: 99px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    /* ── Error state ── */
+    .error-box {
+      background: rgba(255,107,107,.08);
+      border: 1px solid rgba(255,107,107,.3);
+      color: var(--danger);
+      border-radius: 10px;
+      padding: 18px 22px;
+      font-size: 0.9rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 60px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    footer code {
+      font-size: 0.72rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 7px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <p class="label">Tugas Modul AJAX by Jordan Angkawijaya (2311102139)</p>
+    <h1>Direktori Profil</h1>
+    <p>Klik tombol untuk mengambil data dari server tanpa reload halaman.</p>
+  </header>
+
+  <button id="btn-tampilkan">
+    <span class="spinner"></span>
+    <span class="btn-text">Tampilkan Profil</span>
+  </button>
+
+  <div id="hasil-profil"></div>
+
+  <footer>
+    Data diambil dari <code>data.php</code> via <code>fetch()</code> &mdash; tidak ada reload halaman.
+  </footer>
+
+  <script>
+    const btn    = document.getElementById('btn-tampilkan');
+    const hasil  = document.getElementById('hasil-profil');
+
+    btn.addEventListener('click', async () => {
+      // Reset & loading state
+      hasil.innerHTML = '';
+      btn.disabled = true;
+      btn.classList.add('loading');
+      btn.querySelector('.btn-text').textContent = 'Mengambil data…';
+
+      try {
+        const response = await fetch('data.php');
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();   // parse JSON
+
+        // Render each profile card
+        data.forEach((profil, i) => {
+          const inisial = profil.nama.charAt(0).toUpperCase();
+
+          const card = document.createElement('div');
+          card.className = 'profil-card';
+          card.style.animationDelay = `${i * 80}ms`;
+
+          card.innerHTML = `
+            <div class="avatar">${inisial}</div>
+            <div class="profil-info">
+              <div class="nama">${profil.nama}</div>
+              <div class="detail">
+                Nama: <span>${profil.nama}</span> &nbsp;|&nbsp;
+                Pekerjaan: <span>${profil.pekerjaan}</span> &nbsp;|&nbsp;
+                Lokasi: <span>${profil.lokasi}</span>
+              </div>
+            </div>
+            <span class="badge">${profil.lokasi}</span>
+          `;
+
+          hasil.appendChild(card);
+        });
+
+        btn.querySelector('.btn-text').textContent = 'Muat Ulang Data';
+
+      } catch (err) {
+        hasil.innerHTML = `
+          <div class="error-box">
+            ⚠ Gagal mengambil data: <strong>${err.message}</strong><br>
+            <small>Pastikan <code>data.php</code> berjalan di server yang sama (Apache/Nginx/PHP built-in).</small>
+          </div>`;
+        btn.querySelector('.btn-text').textContent = 'Coba Lagi';
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
+    });
+  </script>
+
+</body>
+</html>
